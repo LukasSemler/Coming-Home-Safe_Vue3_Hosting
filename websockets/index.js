@@ -34,7 +34,6 @@ function wsServer(httpServer) {
           elem.ws.send(JSON.stringify({ type: 'stopAlarmAsClient', data: positionData })),
         ); //PositonData ist in dem Fall die Email, bei wessen Client der Alarm aufhören soll
       }
-
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
         connections.forEach((elem) =>
