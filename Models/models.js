@@ -110,8 +110,17 @@ async function patchUserDB(id, user) {
     if (!rows[0]) return false;
 
     const { rows: changeData } = await client.query(
-      'UPDATE kunde SET vorname = $1, nachname = $2, email = $3, strasse = $4, ort = $5, plz = $6 where k_id = $7 returning *; ',
-      [user.vorname, user.nachname, user.email, user.strasse_hnr, user.stadt, user.plz, id],
+      'UPDATE kunde SET vorname = $1, nachname = $2, email = $3, strasse = $4, ort = $5, plz = $6, link_thumbnail = $7 where k_id = $8 returning *; ',
+      [
+        user.vorname,
+        user.nachname,
+        user.email,
+        user.strasse_hnr,
+        user.stadt,
+        user.plz,
+        user.link_thumbnail,
+        id,
+      ],
     );
 
     await client.query('COMMIT');
