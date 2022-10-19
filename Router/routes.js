@@ -36,8 +36,6 @@ router.patch('/changePassword/:id', asyncHandler(changePassword));
 router.get('/getMitarbeiter', asyncHandler(getMitarbeiter));
 router.patch('/changeRole/:id', asyncHandler(changeRole));
 
-router.get('/healthCheck', (req, res) => res.status(200).send('OK'));
-
 router.get('/*', (req, res) => res.redirect('/'));
 
 export default router;
