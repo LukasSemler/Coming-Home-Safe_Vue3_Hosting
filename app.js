@@ -31,7 +31,6 @@ app.use(NotFoundHandler);
 
 const http = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Test-ENV:${process.env.testENV}`);
 });
 
 wsServer(http);
