@@ -21,18 +21,16 @@ function wsServer(httpServer) {
     //Wenn der WebsocketServer Nachrichten bekommt
     ws.on('message', (data) => {
       const { daten: positionData, type, from, to } = JSON.parse(data);
-      const abc = JSON.parse(data);
       //------ALARM------
-      if (type == 'alarm') {
-        console.log('ALARM----------------------------------------------------------------');
+      if (type == 'setalarm') {
         connections.forEach((elem) =>
-          elem.ws.send(JSON.stringify({ type: 'alarm', data: positionData })),
+          elem.ws.send(JSON.stringify({ type: 'setalarm', data: positionData })),
         );
-      } else if (type == 'stopAlarmAsMitarbeiter') {
-        //An WebSocketUser senden dass Alarm beendet wird, SW kümmert sich weiteres drum
+      } else if (type == 'useralarmstopped') {
+        //An WebSocketUser senden dass Alarm beendet wird, SW kümmert sich weiteres drum --> PositonData ist in dem Fall ganzes User-Obj.
         connections.forEach((elem) =>
-          elem.ws.send(JSON.stringify({ type: 'stopAlarmAsClient', data: positionData })),
-        ); //PositonData ist in dem Fall die Email, bei wessen Client der Alarm aufhören soll
+          elem.ws.send(JSON.stringify({ type: 'useralarmstopped', data: positionData })),
+        );
       }
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
