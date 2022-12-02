@@ -7,6 +7,7 @@ import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import { ErrorHandler, NotFoundHandler } from './Middleware/index.js';
 import wsServer from './websockets/index.js';
+import wsclient from 'websocket';
 
 import routes from './Router/routes.js';
 
@@ -34,3 +35,12 @@ const http = app.listen(PORT, () => {
 });
 
 wsServer(http);
+
+// const wsTest = WebSockett('ws://localhost:2410', '');
+const wsKeepAlive = new wsclient.client();
+wsKeepAlive.connect('ws://localhost:2410');
+wsKeepAlive.on('connect', (connection) => {
+  setInterval(() => {
+    connection.send(JSON.stringify({ type: 'IamAlive', daten: '' }));
+  }, 1000);
+});

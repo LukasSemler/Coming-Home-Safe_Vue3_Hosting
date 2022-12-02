@@ -5,6 +5,7 @@ let connections = [];
 
 function wsServer(httpServer) {
   const wss = new WebSocketServer({ server: httpServer });
+
   wss.on('connection', (ws) => {
     console.log('Neuer User hat sich verbunden');
 
