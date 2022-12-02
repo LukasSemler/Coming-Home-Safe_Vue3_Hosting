@@ -36,7 +36,7 @@ const http = app.listen(PORT, () => {
 
 wsServer(http);
 
-// const wsTest = WebSockett('ws://localhost:2410', '');
+//ServiceWorker immer am Leben erhalten
 const wsKeepAlive = new wsclient.client();
 wsKeepAlive.connect('ws://localhost:2410');
 wsKeepAlive.on('connect', (connection) => {
