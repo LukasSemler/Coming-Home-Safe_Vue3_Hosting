@@ -34,13 +34,5 @@ const http = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+//WebsocketServer
 wsServer(http);
-
-//ServiceWorker immer am Leben erhalten
-// const wsKeepAlive = new wsclient.client();
-// wsKeepAlive.connect('ws://localhost:2410');
-// wsKeepAlive.on('connect', (connection) => {
-//   setInterval(() => {
-//     connection.send(JSON.stringify({ type: 'IamAlive', daten: '' }));
-//   }, 1000);
-// });
