@@ -75,7 +75,7 @@ function wsServer(httpServer) {
 
       //   // User aus dem Array löschen
       //   connections = connections.filter((elem) => elem.ws != ws);
-      // }
+      }
     });
     ws.on('close', () => {
       console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
