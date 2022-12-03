@@ -36,3 +36,14 @@ const http = app.listen(PORT, () => {
 
 //WebsocketServer
 wsServer(http);
+
+//Pseudo Keep alive WS-Client
+let wsKeepAliveClient = new wsclient.client();
+
+wsKeepAliveClient.connect(
+  process.env.PORT == 2410 ? 'ws://localhost:2410': 'wss://chstest.onrender.com');
+wsKeepAliveClient.on('connect', (event) => {
+  setInterval(() => {
+    event.send(JSON.stringify({ type: 'IamAlive', daten: '' }));
+  }, 1000);
+});
