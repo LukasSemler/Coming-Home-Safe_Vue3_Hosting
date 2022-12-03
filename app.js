@@ -37,10 +37,10 @@ const http = app.listen(PORT, () => {
 wsServer(http);
 
 //ServiceWorker immer am Leben erhalten
-const wsKeepAlive = new wsclient.client();
-wsKeepAlive.connect('ws://localhost:2410');
-wsKeepAlive.on('connect', (connection) => {
-  setInterval(() => {
-    connection.send(JSON.stringify({ type: 'IamAlive', daten: '' }));
-  }, 1000);
-});
+// const wsKeepAlive = new wsclient.client();
+// wsKeepAlive.connect('ws://localhost:2410');
+// wsKeepAlive.on('connect', (connection) => {
+//   setInterval(() => {
+//     connection.send(JSON.stringify({ type: 'IamAlive', daten: '' }));
+//   }, 1000);
+// });
