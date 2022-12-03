@@ -35,6 +35,8 @@ function wsServer(httpServer) {
       }
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
+        console.log('POSTITION WEITERGESANDT ', positionData.dateTime);
+
         connections.forEach((elem) =>
           elem.ws.send(JSON.stringify({ type: 'getPosition', data: positionData })),
         );
