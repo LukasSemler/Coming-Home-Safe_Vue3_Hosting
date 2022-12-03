@@ -59,41 +59,41 @@ function wsServer(httpServer) {
           }
         });
       }
-      //------Userabmeldung------ --> Ab da verschwindet dieser dann von der map
-      // else if (type == 'userabmeldung') {
-      //   console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
+      // ------Userabmeldung------ --> Ab da verschwindet dieser dann von der map
+      else if (type == 'userabmeldung') {
+        console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
 
-      //   // den anderen Verbindeungen sagen das ein User gegangen ist
-      //   connections.forEach((elem) =>
-      //     elem.ws.send(
-      //       JSON.stringify({
-      //         type: 'userLeft',
-      //         data: connections.find((elem) => elem.ws == ws).email,
-      //       }),
-      //     ),
-      //   );
+        // den anderen Verbindeungen sagen das ein User gegangen ist
+        connections.forEach((elem) =>
+          elem.ws.send(
+            JSON.stringify({
+              type: 'userLeft',
+              data: connections.find((elem) => elem.ws == ws).email,
+            }),
+          ),
+        );
 
-      //   // User aus dem Array löschen
-      //   connections = connections.filter((elem) => elem.ws != ws);
-      // }
+        // User aus dem Array löschen
+        connections = connections.filter((elem) => elem.ws != ws);
+      }
     });
 
-    ws.on('close', () => {
-      console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
+    //   ws.on('close', () => {
+    //     console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
 
-      // den anderen Verbindeungen sagen das ein User gegangen ist
-      connections.forEach((elem) =>
-        elem.ws.send(
-          JSON.stringify({
-            type: 'userLeft',
-            data: connections.find((elem) => elem.ws == ws).email,
-          }),
-        ),
-      );
+    //     // den anderen Verbindeungen sagen das ein User gegangen ist
+    //     connections.forEach((elem) =>
+    //       elem.ws.send(
+    //         JSON.stringify({
+    //           type: 'userLeft',
+    //           data: connections.find((elem) => elem.ws == ws).email,
+    //         }),
+    //       ),
+    //     );
 
-      // User aus dem Array löschen
-      connections = connections.filter((elem) => elem.ws != ws);
-    });
+    //     // User aus dem Array löschen
+    //     connections = connections.filter((elem) => elem.ws != ws);
+    //   });
   });
 }
 
