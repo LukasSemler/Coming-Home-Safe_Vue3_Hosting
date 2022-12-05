@@ -101,10 +101,10 @@ function wsServer(httpServer) {
 }
 
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
-// setInterval(() => {
-//   console.log('Länge: ' + connections.length);
-//   // console.log(connections.map(({ email }) => email));
-//   console.log(connections);
-// }, 1000);
+setInterval(() => {
+  console.log('Länge: ' + connections.length);
+  console.log(connections.map(({ email }) => email));
+  // console.log(connections);
+}, 1000);
 
 export default wsServer;
