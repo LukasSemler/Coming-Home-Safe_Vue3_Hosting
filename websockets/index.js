@@ -88,18 +88,6 @@ function wsServer(httpServer) {
       }
     });
     ws.on('close', () => {
-      // console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
-
-      // den anderen Verbindeungen sagen das ein User gegangen ist
-      // connections.forEach((elem) =>
-      //   elem.ws.send(
-      //     JSON.stringify({
-      //       type: 'userLeft',
-      //       data: connections.find((elem) => elem.ws == ws).email,
-      //     }),
-      //   ),
-      // );
-
       // User aus dem Array löschen
       connections = connections.map((elem) => {
         if (elem.ws == ws) {
@@ -113,10 +101,10 @@ function wsServer(httpServer) {
 }
 
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
-setInterval(() => {
-  console.log('Länge: ' + connections.length);
-  // console.log(connections.map(({ email }) => email));
-  console.log(connections);
-}, 1000);
+// setInterval(() => {
+//   console.log('Länge: ' + connections.length);
+//   // console.log(connections.map(({ email }) => email));
+//   console.log(connections);
+// }, 1000);
 
 export default wsServer;
