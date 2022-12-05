@@ -26,7 +26,13 @@ function wsServer(httpServer) {
 
     //Alle Aktiven User an alle User senden
     connections.forEach((elem) => {
-      elem.ws.send(JSON.stringify({ type: 'newConnection', data: email }));
+      try {
+        elem.ws.send(JSON.stringify({ type: 'newConnection', data: email }));
+      } catch {
+        console.log('FEHLER BEIM WEBSOCKET --> newConnection');
+        console.log(elem);
+        console.log('FEHLER BEIM WEBSOCKET --> newConnection');
+      }
     });
 
     //Wenn der WebsocketServer Nachrichten bekommt
@@ -39,33 +45,57 @@ function wsServer(httpServer) {
         );
       } else if (type == 'useralarmstopped') {
         //An WebSocketUser senden dass Alarm beendet wird, SW kümmert sich weiteres drum --> PositonData ist in dem Fall ganzes User-Obj.
-        connections.forEach((elem) =>
-          elem.ws.send(JSON.stringify({ type: 'useralarmstopped', data: positionData })),
-        );
+        connections.forEach((elem) => {
+          try {
+            elem.ws.send(JSON.stringify({ type: 'useralarmstopped', data: positionData }));
+          } catch {
+            console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
+            console.log(elem);
+            console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
+          }
+        });
       }
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
         console.log('POSTITION WEITERGESANDT ', positionData.dateTime);
 
-        connections.forEach((elem) =>
-          elem.ws.send(JSON.stringify({ type: 'getPosition', data: positionData })),
-        );
+        connections.forEach((elem) => {
+          try {
+            elem.ws.send(JSON.stringify({ type: 'getPosition', data: positionData }));
+          } catch {
+            console.log('FEHLER BEIM WEBSOCKET --> sendPosition');
+            console.log(elem);
+            console.log('FEHLER BEIM WEBSOCKET --> sendPosition');
+          }
+        });
       }
       //-----MESSAGE------
       else if (type == 'MessageUser') {
         console.log(type);
         console.log(positionData);
 
-        connections.forEach((elem) =>
-          elem.ws.send(JSON.stringify({ type: 'MessageUser', data: positionData, from: from })),
-        );
+        connections.forEach((elem) => {
+          try {
+            elem.ws.send(JSON.stringify({ type: 'MessageUser', data: positionData, from: from }));
+          } catch {
+            console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
+            console.log(elem);
+            console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
+          }
+        });
       } else if (type == 'MessageMitarbeiter') {
         connections.forEach((elem) => {
           console.log('to: ' + to);
           console.log('EMAIL', elem.email);
           console.log(elem);
           if (elem.email == to) {
-            elem.ws.send(JSON.stringify({ type: 'MessageMitarbeiter', data: positionData }));
+            try {
+              elem.ws.send(JSON.stringify({ type: 'MessageMitarbeiter', data: positionData }));
+            } catch {
+              console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
+              console.log(elem);
+              console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
+            }
           }
         });
       }
@@ -74,14 +104,20 @@ function wsServer(httpServer) {
         console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
 
         // den anderen Verbindeungen sagen das ein User gegangen ist
-        connections.forEach((elem) =>
-          elem.ws.send(
-            JSON.stringify({
-              type: 'userLeft',
-              data: connections.find((elem) => elem.ws == ws).email,
-            }),
-          ),
-        );
+        connections.forEach((elem) => {
+          try {
+            elem.ws.send(
+              JSON.stringify({
+                type: 'userLeft',
+                data: connections.find((elem) => elem.ws == ws).email,
+              }),
+            );
+          } catch {
+            console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
+            console.log(elem);
+            console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
+          }
+        });
 
         // User aus dem Array löschen
         connections = connections.filter((elem) => elem.ws != ws);
