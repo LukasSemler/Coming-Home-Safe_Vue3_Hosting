@@ -2,6 +2,7 @@ import { WebSocketServer } from 'ws';
 
 //WebsocketVariablen
 let connections = [];
+let counter = 0;
 
 function wsServer(httpServer) {
   const wss = new WebSocketServer({ server: httpServer });
@@ -12,8 +13,7 @@ function wsServer(httpServer) {
     //Verbundenen User anpassen und in Array speichern
     let email = ws._protocol;
     email = email.replace('|', '@');
-    const vorhanden = connections.find(({ email: found }) => found == email);
-    if (!vorhanden) connections.push({ ws, email });
+    if (!connections.find(({ email: found }) => found == email)) connections.push({ ws, email });
     else {
       connections = connections.map((elem) => {
         if (elem.email == email) {
@@ -23,7 +23,7 @@ function wsServer(httpServer) {
         }
       });
     }
-
+   
     //Alle Aktiven User an alle User senden
     connections.forEach((elem) => {
       try {
@@ -57,7 +57,7 @@ function wsServer(httpServer) {
       }
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
-        console.log('POSTITION WEITERGESANDT ', positionData.dateTime);
+        console.log('POSTITION WEITERGESANDT', positionData.dateTime);
 
         connections.forEach((elem) => {
           console.log(elem);
@@ -122,6 +122,16 @@ function wsServer(httpServer) {
         // User aus dem Array löschen
         connections = connections.filter((elem) => elem.ws != ws);
       }
+
+      //TODO LÖSCHEN
+      else if (type == 'IamAlive') {
+        counter += 1;
+        connections.forEach((elem) => {
+          if (elem.ws) {
+            elem.ws.send(JSON.stringify({ type: 'hello world', data: `Hello World: ${counter}` }));
+          }
+        });
+      }
     });
     ws.on('close', () => {
       // User aus dem Array löschen
@@ -142,5 +152,5 @@ setInterval(() => {
   // console.log(connections.map(({ email }) => email));
   console.log(connections);
 }, 1000);
-
+  
 export default wsServer;

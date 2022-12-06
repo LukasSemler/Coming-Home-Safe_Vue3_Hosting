@@ -45,6 +45,6 @@ wsKeepAliveClient.connect(
 );
 wsKeepAliveClient.on('connect', (event) => {
   setInterval(() => {
-    event.send(JSON.stringify({ type: 'IamAlive', daten: '' }));
+    event.send(JSON.stringify({ type: 'IamAlive', daten: `Hello World` }));
   }, 1000);
-});
+});  
