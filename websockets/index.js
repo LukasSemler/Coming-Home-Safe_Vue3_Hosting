@@ -60,12 +60,12 @@ function wsServer(httpServer) {
         console.log('POSTITION WEITERGESANDT ', positionData.dateTime);
 
         connections.forEach((elem) => {
-          try {
+          console.log(elem);
+
+          if (elem.ws) {
             elem.ws.send(JSON.stringify({ type: 'getPosition', data: positionData }));
-          } catch {
-            console.log('FEHLER BEIM WEBSOCKET --> sendPosition');
-            console.log(elem);
-            console.log('FEHLER BEIM WEBSOCKET --> sendPosition');
+          } else {
+            console.log('Kein WS beim dem Kunden im Connection-Array');
           }
         });
       }
@@ -85,8 +85,8 @@ function wsServer(httpServer) {
         });
       } else if (type == 'MessageMitarbeiter') {
         connections.forEach((elem) => {
-          console.log('to: ' + to);
-          console.log('EMAIL', elem.email);
+          // console.log('to: ' + to);
+          // console.log('EMAIL', elem.email);
           console.log(elem);
           if (elem.email == to) {
             try {
@@ -101,7 +101,7 @@ function wsServer(httpServer) {
       }
       // ------Userabmeldung------ --> Ab da verschwindet dieser dann von der map
       else if (type == 'userabmeldung') {
-        console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
+        // console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
 
         // den anderen Verbindeungen sagen das ein User gegangen ist
         connections.forEach((elem) => {
@@ -139,8 +139,8 @@ function wsServer(httpServer) {
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
 setInterval(() => {
   console.log('Länge: ' + connections.length);
-  console.log(connections.map(({ email }) => email));
-  // console.log(connections);
+  // console.log(connections.map(({ email }) => email));
+  console.log(connections);
 }, 1000);
 
 export default wsServer;
