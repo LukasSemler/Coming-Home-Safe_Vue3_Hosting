@@ -29,15 +29,16 @@ function wsServer(httpServer) {
     connections.forEach((elem) => {
       try {
         elem.ws.send(JSON.stringify({ type: 'newConnection', data: email }));
-      } catch (err) {
+      } catch {
+        console.log('FEHLER BEIM WEBSOCKET --> newConnection');
         console.log(elem);
         console.log('FEHLER BEIM WEBSOCKET --> newConnection');
-        console.log(err);
       }
     });
 
     //Wenn der WebsocketServer Nachrichten bekommt
     ws.on('message', (data) => {
+      console.log(JSON.parse(data));
       const { daten: positionData, type, from, to } = JSON.parse(data);
       //------ALARM------
       if (type == 'setalarm') {
@@ -58,14 +59,11 @@ function wsServer(httpServer) {
       }
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
-        console.log(
-          'POSTITION BEKOMMEN WS',
-          positionData.user.vorname,
-          ' ',
-          positionData.user.nachname,
-        );
+        // console.log('POSTITION WEITERGESANDT', positionData.dateTime);
 
         connections.forEach((elem) => {
+          // console.log(elem);
+
           if (elem.ws) {
             elem.ws.send(JSON.stringify({ type: 'getPosition', data: positionData }));
           } else {
@@ -117,29 +115,23 @@ function wsServer(httpServer) {
         // console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
 
         // den anderen Verbindeungen sagen das ein User gegangen ist
-        // connections.forEach((elem) => {
-        //   try {
-        //     elem.ws.send(
-        //       JSON.stringify({
-        //         type: 'userLeft',
-        //         data: connections.find((elem) => elem.ws == ws).email,
-        //       }),
-        //     );
-        //   } catch {
-        //     console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
-        //     console.log(elem);
-        //     console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
-        //   }
-        // });
+        connections.forEach((elem) => {
+          try {
+            elem.ws.send(
+              JSON.stringify({
+                type: 'userLeft',
+                data: connections.find((elem) => elem.ws == ws).email,
+              }),
+            );
+          } catch {
+            console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
+            console.log(elem);
+            console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
+          }
+        });
 
         // User aus dem Array löschen
-        try {
-          connections = connections.filter((elem) => elem.ws != ws);
-        } catch {
-          console.log(
-            'Beim löschen des Users aus dem Array ist ein Fehler aufgetreten... (vielleicht war er schon weg)',
-          );
-        }
+        connections = connections.filter((elem) => elem.ws != ws);
       }
 
       //TODO LÖSCHEN
@@ -168,11 +160,8 @@ function wsServer(httpServer) {
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
 setInterval(() => {
   // console.log('Länge: ' + connections.length);
-  console.log('------');
-  connections.forEach(({ ws, email }) =>
-    console.log(ws ? email + ' ws aktiv' : email + 'ws nicht aktiv'),
-  );
-  console.log('------');
+  // console.log(connections.map(({ email }) => email));
+  // console.log(connections);
 }, 1000);
 
 export default wsServer;
