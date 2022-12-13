@@ -1,4 +1,5 @@
 import { WebSocketServer } from 'ws';
+import colors from 'colors';
 
 //WebsocketVariablen
 let connections = [];
@@ -23,7 +24,7 @@ function wsServer(httpServer) {
         }
       });
     }
-   
+
     //Alle Aktiven User an alle User senden
     connections.forEach((elem) => {
       try {
@@ -37,6 +38,7 @@ function wsServer(httpServer) {
 
     //Wenn der WebsocketServer Nachrichten bekommt
     ws.on('message', (data) => {
+      console.log(JSON.parse(data));
       const { daten: positionData, type, from, to } = JSON.parse(data);
       //------ALARM------
       if (type == 'setalarm') {
@@ -49,34 +51,41 @@ function wsServer(httpServer) {
           try {
             elem.ws.send(JSON.stringify({ type: 'useralarmstopped', data: positionData }));
           } catch {
-            console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
-            console.log(elem);
-            console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
+            // console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
+            // console.log(elem);
+            // console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
           }
         });
       }
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
-        console.log('POSTITION WEITERGESANDT', positionData.dateTime);
+        // console.log('POSTITION WEITERGESANDT', positionData.dateTime);
 
         connections.forEach((elem) => {
-          console.log(elem);
+          // console.log(elem);
 
           if (elem.ws) {
             elem.ws.send(JSON.stringify({ type: 'getPosition', data: positionData }));
           } else {
-            console.log('Kein WS beim dem Kunden im Connection-Array');
+            // console.log('Kein WS beim dem Kunden im Connection-Array');
           }
         });
       }
       //-----MESSAGE------
       else if (type == 'MessageUser') {
+        //! NEU
+        console.log('MESSAGE FROM USER'.bgCyan);
         console.log(type);
         console.log(positionData);
-
         connections.forEach((elem) => {
           try {
-            elem.ws.send(JSON.stringify({ type: 'MessageUser', data: positionData, from: from }));
+            elem.ws.send(
+              JSON.stringify({
+                type: 'MessageUser',
+                data: positionData,
+                from: positionData.fromEmail,
+              }),
+            );
           } catch {
             console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
             console.log(elem);
@@ -85,10 +94,12 @@ function wsServer(httpServer) {
         });
       } else if (type == 'MessageMitarbeiter') {
         connections.forEach((elem) => {
+          console.log('MESSAGE MITARBEITER'.bgGreen);
+          console.log(positionData);
           // console.log('to: ' + to);
           // console.log('EMAIL', elem.email);
           console.log(elem);
-          if (elem.email == to) {
+          if (elem.email == positionData[positionData.length - 1].to) {
             try {
               elem.ws.send(JSON.stringify({ type: 'MessageMitarbeiter', data: positionData }));
             } catch {
@@ -148,9 +159,9 @@ function wsServer(httpServer) {
 
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
 setInterval(() => {
-  console.log('Länge: ' + connections.length);
+  // console.log('Länge: ' + connections.length);
   // console.log(connections.map(({ email }) => email));
-  console.log(connections);
+  // console.log(connections);
 }, 1000);
-  
+
 export default wsServer;

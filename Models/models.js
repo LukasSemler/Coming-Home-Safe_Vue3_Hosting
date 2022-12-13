@@ -93,7 +93,7 @@ async function sendPositionDB(position) {
     [position.lat, position.lng, position.dateTime, position.user.k_id],
   );
 
-  console.log('rows Send position', rows[0]);
+  // console.log('rows Send position', rows[0]);
 
   return rows;
 }

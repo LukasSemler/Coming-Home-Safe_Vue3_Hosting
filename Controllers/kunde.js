@@ -84,11 +84,11 @@ const sendCodeUser = async (req, res) => {
 
   //Schauen ob der User schon in der DB vorhanden ist
   const vorhanden = await checkIfUserExists(email);
-  console.log('Vorhanden: ', vorhanden);
+  // console.log('Vorhanden: ', vorhanden);
 
   // Wenn der User schon vorhanden ist 400 zurückschicken
   if (vorhanden) return res.status(400).send('Der User ist bereits vorhanden');
-  console.log('Vorhanden', vorhanden);
+  // console.log('Vorhanden', vorhanden);
 
   // Code generieren
   const code = makeAuthCode(6);
@@ -142,12 +142,12 @@ const sendDataRegister = async (req, res) => {
 
 //Wenn sich User anmelden will
 const login = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { email, password } = req.body;
   console.log(email, password);
 
   const result = await loginUser(email, password);
-  console.log('result: ', result);
+  // console.log('result: ', result);
 
   //Schauen ob der User ein Admin ist, wenn ja Mail schicken, sonst normal anmelden
   if (result) {
@@ -259,7 +259,7 @@ const getMitarbeiter = async (req, res) => {
 const changeRole = async (req, res) => {
   const { isadmin } = req.body;
   const { id } = req.params;
-  console.log(isadmin);
+  // console.log(isadmin);
 
   const erg = await changeRoleDB(isadmin, id);
 
