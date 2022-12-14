@@ -96,9 +96,7 @@ function wsServer(httpServer) {
 
         //Nachricht an MitarbeiterWS senden, dass neue Nachricht eingetroffen ist
         connections.forEach(({ ws }) =>
-          ws?.send(
-            JSON.stringify({ type: 'MessageNeueNachrichtVonUser', daten: positionData }),
-          ),
+          ws?.send(JSON.stringify({ type: 'MessageNeueNachrichtVonUser', daten: positionData })),
         );
       } else if (type == 'MessageChatFromMitarbeiter') {
         //NachrichtenArray im Connection-Array abspeichenr
@@ -151,7 +149,8 @@ setInterval(() => {
   console.log('########');
   connections.forEach((elem) => {
     console.log(`${elem.email} (${elem.ws ? 'ws' : 'kein ws'})`);
-    // console.log(elem.nachrichten);
+    console.log(elem);
+    console.log('--------------------------------');
   });
   console.log('########');
 }, 1000);
