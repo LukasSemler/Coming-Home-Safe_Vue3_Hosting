@@ -14,143 +14,132 @@ function wsServer(httpServer) {
     //Verbundenen User anpassen und in Array speichern
     let email = ws._protocol;
     email = email.replace('|', '@');
-    if (!connections.find(({ email: found }) => found == email)) connections.push({ ws, email });
-    else {
-      connections = connections.map((elem) => {
-        if (elem.email == email) {
-          return { ws, email: elem.email };
-        } else {
-          return { ...elem };
-        }
-      });
-    }
 
-    //Alle Aktiven User an alle User senden
-    connections.forEach((elem) => {
-      try {
-        elem.ws.send(JSON.stringify({ type: 'newConnection', data: email }));
-      } catch {
-        console.log('FEHLER BEIM WEBSOCKET --> newConnection');
-        console.log(elem);
-        console.log('FEHLER BEIM WEBSOCKET --> newConnection');
-      }
-    });
+    if (!connections.find(({ email: found }) => found == email))
+      connections.push({ ws, email }); //Neuen User hinzufügen
+    //Rausgefallenen Kunden einordnen
+    else {
+      connections = connections.map((connEl) =>
+        connEl.email == email ? { ...connEl, ws } : connEl,
+      );
+    }
 
     //Wenn der WebsocketServer Nachrichten bekommt
     ws.on('message', (data) => {
-      console.log(JSON.parse(data));
       const { daten: positionData, type, from, to } = JSON.parse(data);
-      //------ALARM------
-      if (type == 'setalarm') {
-        connections.forEach((elem) =>
-          elem.ws.send(JSON.stringify({ type: 'setalarm', data: positionData })),
-        );
-      } else if (type == 'useralarmstopped') {
-        //An WebSocketUser senden dass Alarm beendet wird, SW kümmert sich weiteres drum --> PositonData ist in dem Fall ganzes User-Obj.
-        connections.forEach((elem) => {
-          try {
-            elem.ws.send(JSON.stringify({ type: 'useralarmstopped', data: positionData }));
-          } catch {
-            // console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
-            // console.log(elem);
-            // console.log('FEHLER BEIM WEBSOCKET --> useralarmstopped');
+      // console.log(positionData); //*Nachricht anzeigen
+
+      //------USERANMELDUNG-------- HIER WIRD DER USER KOMPLETT IM ARRAY ERSTELLT!
+      if (type == 'useranmeldung') {
+        connections = connections.map((elem) => {
+          if (elem.email == positionData.email) {
+            return {
+              ws: elem.ws,
+              email: elem.email,
+              userfarbe: '#' + Math.floor(Math.random() * 16777215).toString(16),
+              nachrichten: [],
+              alarm: false,
+              user: positionData,
+              lat: null,
+              lng: null,
+              zuletztGesichtet: null,
+            };
+          } else {
+            return elem;
           }
         });
+      }
+      //------ALARM------
+      else if (type == 'setalarm') {
+        //Alarm beim bestimmten User auf True setzen
+        console.log('ALARM BEIM KUNDEN ', positionData.email, ' setzen!');
+        connections = connections.map((connEl) =>
+          connEl.email == positionData.email ? { ...connEl, alarm: true } : connEl,
+        );
+
+        //Nachricht an MitarbeiterWS senden, dass Alarm gestartet wurde
+        connections.forEach(({ ws }) =>
+          ws?.send(JSON.stringify({ type: 'MessageAlarmAusgeloest', daten: positionData })),
+        );
+
+        // connections.filter(() => )
+      } else if (type == 'useralarmstopped') {
+        //An WebSocketUser senden dass Alarm beendet wird, SW kümmert sich weiteres drum --> PositonData ist in dem Fall ganzes User-Obj.
+        console.log('ALARM BEIM KUNDEN ', positionData.email, ' gestoppt!');
+        connections = connections.map((connEl) =>
+          connEl.email == positionData.email ? { ...connEl, alarm: false } : connEl,
+        );
       }
       //-------POSITION-TRACKING-------
       else if (type == 'sendPosition') {
-        // console.log('POSTITION WEITERGESANDT', positionData.dateTime);
-
-        connections.forEach((elem) => {
-          // console.log(elem);
-
-          if (elem.ws) {
-            elem.ws.send(JSON.stringify({ type: 'getPosition', data: positionData }));
-          } else {
-            // console.log('Kein WS beim dem Kunden im Connection-Array');
-          }
-        });
+        //Standort dem jeweiligen User zuteilen
+        connections = connections.map((connEl) =>
+          positionData.user.email == connEl.email
+            ? {
+                ...connEl,
+                lat: positionData.lat,
+                lng: positionData.lng,
+                zuletztGesichtet: positionData.zuletztGesichtet,
+                adresse: positionData.adresse,
+              }
+            : connEl,
+        );
       }
       //-----MESSAGE------
-      else if (type == 'MessageUser') {
-        //! NEU
-        console.log('MESSAGE FROM USER'.bgCyan);
-        console.log(type);
-        console.log(positionData);
-        connections.forEach((elem) => {
-          try {
-            elem.ws.send(
-              JSON.stringify({
-                type: 'MessageUser',
-                data: positionData,
-                from: positionData.fromEmail,
-              }),
-            );
-          } catch {
-            console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
-            console.log(elem);
-            console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
-          }
-        });
-      } else if (type == 'MessageMitarbeiter') {
-        connections.forEach((elem) => {
-          console.log('MESSAGE MITARBEITER'.bgGreen);
-          console.log(positionData);
-          // console.log('to: ' + to);
-          // console.log('EMAIL', elem.email);
-          console.log(elem);
-          if (elem.email == positionData[positionData.length - 1].to) {
-            try {
-              elem.ws.send(JSON.stringify({ type: 'MessageMitarbeiter', data: positionData }));
-            } catch {
-              console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
-              console.log(elem);
-              console.log('FEHLER BEIM WEBSOCKET --> MessageUser');
-            }
-          }
-        });
+      else if (type == 'MessageChatFromUser') {
+        //NachrichtenArray im Connection-Array abspeichenr
+        connections = connections.map((connEl) =>
+          connEl.email == positionData.WSUser.email
+            ? { ...connEl, nachrichten: positionData.nachrichten }
+            : connEl,
+        );
+
+        //Nachricht an MitarbeiterWS senden, dass neue Nachricht eingetroffen ist
+        connections.forEach(({ ws }) =>
+          ws?.send(
+            JSON.stringify({ type: 'MessageNeueNachrichtVonUser', daten: positionData }),
+          ),
+        );
+      } else if (type == 'MessageChatFromMitarbeiter') {
+        //NachrichtenArray im Connection-Array abspeichenr
+
+        connections = connections.map((connEl) =>
+          connEl.email == positionData.WSUser.email
+            ? { ...connEl, nachrichten: positionData.nachrichten }
+            : connEl,
+        );
+
+        //Nachricht an MitarbeiterWS senden, dass neue Nachricht eingetroffen ist
+        connections.forEach(({ ws }) =>
+          ws?.send(
+            JSON.stringify({
+              type: 'MessageNeueNachrichtVonMitarbeiter',
+              daten: positionData.WSUser,
+            }),
+          ),
+        );
       }
-      // ------Userabmeldung------ --> Ab da verschwindet dieser dann von der map
+      // ------USERABMELDUNG------ --> Ab da verschwindet dieser dann von der map
       else if (type == 'userabmeldung') {
-        // console.log(`User: ${connections.find((elem) => elem.ws == ws).email} left`);
-
-        // den anderen Verbindeungen sagen das ein User gegangen ist
-        connections.forEach((elem) => {
-          try {
-            elem.ws.send(
-              JSON.stringify({
-                type: 'userLeft',
-                data: connections.find((elem) => elem.ws == ws).email,
-              }),
-            );
-          } catch {
-            console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
-            console.log(elem);
-            console.log('FEHLER BEIM WEBSOCKET --> userabmeldung');
-          }
-        });
-
         // User aus dem Array löschen
-        connections = connections.filter((elem) => elem.ws != ws);
-      }
-
-      //TODO LÖSCHEN
-      else if (type == 'IamAlive') {
-        counter += 1;
-        connections.forEach((elem) => {
-          if (elem.ws) {
-            elem.ws.send(JSON.stringify({ type: 'hello world', data: `Hello World: ${counter}` }));
-          }
-        });
+        try {
+          connections = connections.filter((elem) => elem.ws != ws);
+        } catch {
+          console.log(
+            'Beim löschen des Users aus dem Array ist ein Fehler aufgetreten... (vielleicht war er schon weg)',
+          );
+        }
       }
     });
+
+    //Wenn ein User disconnected
     ws.on('close', () => {
       // User aus dem Array löschen
       connections = connections.map((elem) => {
         if (elem.ws == ws) {
-          return { email: elem.email };
+          return { ...elem, ws: null };
         } else {
-          return { ...elem };
+          return elem;
         }
       });
     });
@@ -159,9 +148,46 @@ function wsServer(httpServer) {
 
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
 setInterval(() => {
-  // console.log('Länge: ' + connections.length);
-  // console.log(connections.map(({ email }) => email));
-  // console.log(connections);
+  console.log('########');
+  connections.forEach((elem) => {
+    console.log(`${elem.email} (${elem.ws ? 'ws' : 'kein ws'})`);
+    // console.log(elem.nachrichten);
+  });
+  console.log('########');
 }, 1000);
+
+//ConnectionsArray an alle Senden, für Gleichmäßigkeit
+setInterval(() => {
+  connections.forEach(({ ws }) =>
+    ws?.send(
+      JSON.stringify({
+        type: 'connectionsVerteilung',
+        daten: connections.map(
+          ({
+            email,
+            nachrichten,
+            alarm,
+            user,
+            lat,
+            lng,
+            zuletztGesichtet,
+            userfarbe,
+            adresse,
+          }) => ({
+            email,
+            nachrichten,
+            alarm,
+            userfarbe,
+            user,
+            lat,
+            lng,
+            zuletztGesichtet,
+            adresse,
+          }),
+        ),
+      }),
+    ),
+  );
+}, 2000);
 
 export default wsServer;

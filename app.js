@@ -37,14 +37,15 @@ const http = app.listen(PORT, () => {
 //WebsocketServer
 wsServer(http);
 
+//! KANN MAN EIGENTLICH WEGLÖSCHE
 //Pseudo Keep alive WS-Client
-let wsKeepAliveClient = new wsclient.client();
-wsKeepAliveClient.connect(
-  process.env.PORT == 2410 ? 'ws://localhost:2410' : 'wss://chstest.onrender.com',
-  'KeepAliveClient',
-);
-wsKeepAliveClient.on('connect', (event) => {
-  setInterval(() => {
-    event.send(JSON.stringify({ type: 'IamAlive', daten: `Hello World` }));
-  }, 1000);
-});  
+// let wsKeepAliveClient = new wsclient.client();
+// wsKeepAliveClient.connect(
+//   process.env.PORT == 2410 ? 'ws://localhost:2410' : 'wss://chstest.onrender.com',
+//   'KeepAliveClient',
+// );
+// wsKeepAliveClient.on('connect', (event) => {
+//   setInterval(() => {
+//     // event.send(JSON.stringify({ type: 'IamAlive', daten: `Hello World` }));
+//   }, 1000);
+// });  
