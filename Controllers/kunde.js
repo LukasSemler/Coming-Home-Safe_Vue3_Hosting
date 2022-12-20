@@ -14,7 +14,8 @@ import postmark from 'postmark';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-
+import bcrypt from 'bcrypt'
+const hashSalt = 5; 
 dotenv.config();
 
 const dirname = path.resolve();
@@ -63,6 +64,8 @@ const validateUser = validator({
     },
   },
 });
+
+
 
 //Generiert einen Code (Passwort vergessen + Auth-Code)
 let makeAuthCode = (length) => {
@@ -133,7 +136,8 @@ const sendThumbnail = async (req, res) => {
 
 const sendDataRegister = async (req, res) => {
   console.log(req.body);
-  const result = await registerUserDB(req.body);
+  const encrptedPW = bcrypt.hashSync(req.body.password, hashSalt);
+  const result = await registerUserDB(req.body, encrptedPW);
 
   if (result) return res.status(200).send('Erfolgreich registriert');
 

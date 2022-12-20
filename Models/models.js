@@ -1,4 +1,7 @@
 import { query, pool } from '../DB/index.js';
+import bcrypt from 'bcrypt';
+
+
 
 const checkIfUserExists = async (id) => {
   const { rows } = await query('SELECT * FROM kunde WHERE email = $1', [id]);
@@ -7,7 +10,7 @@ const checkIfUserExists = async (id) => {
   return false;
 };
 
-const registerUserDB = async (user) => {
+const registerUserDB = async (user, encrptedPW) => {
   const client = await pool.connect();
 
   try {
@@ -21,7 +24,7 @@ values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *;`,
         user.vorname,
         user.nachname,
         user.email,
-        user.password,
+        encrptedPW,
         user.strasse_hnr,
         user.stadt,
         user.plz,
@@ -55,7 +58,7 @@ const loginUser = async (email, password) => {
   console.log('password: ' + password);
   const { rows } = await query('SELECT * FROM kunde WHERE email = $1', [email]);
 
-  if (rows[0].passwort == password) return rows[0];
+  if (bcrypt.compareSync(password, rows[0].passwort)) return rows[0];
 
   return false;
 };
