@@ -37,7 +37,7 @@ function wsServer(httpServer) {
               ws: elem.ws,
               email: elem.email,
               userfarbe: '#' + Math.floor(Math.random() * 16777215).toString(16),
-              nachrichten: [],
+              nachrichten: elem.nachrichten, //Seine alten Nachrichten wiederherstellen
               alarm: false,
               user: positionData,
               lat: null,
@@ -163,7 +163,7 @@ setInterval(() => {
     console.log('--------------------------------');
   });
   console.log('########');
-}, 1000);
+}, 2000);
 
 //ConnectionsArray an alle Senden, für Gleichmäßigkeit
 setInterval(() => {
