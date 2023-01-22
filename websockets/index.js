@@ -14,9 +14,9 @@ function wsServer(httpServer) {
     //Verbundenen User anpassen und in Array speichern
     let email = ws._protocol;
     email = email.replace('|', '@');
-
-    if (!connections.find(({ email: found }) => found == email))
-      connections.push({ ws, email }); //Neuen User hinzufügen
+    
+    //Neuen User hinzufügen
+    if (!connections.find(({ email: found }) => found == email)) connections.push({ ws, email });
     //Rausgefallenen Kunden einordnen
     else {
       connections = connections.map((connEl) =>
@@ -37,7 +37,7 @@ function wsServer(httpServer) {
               ws: elem.ws,
               email: elem.email,
               userfarbe: '#' + Math.floor(Math.random() * 16777215).toString(16),
-              nachrichten: elem.nachrichten, //Seine alten Nachrichten wiederherstellen
+              nachrichten: [],
               alarm: false,
               user: positionData,
               lat: null,
