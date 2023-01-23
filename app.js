@@ -19,11 +19,18 @@ const app = express();
 const PORT = process.env.PORT || 2410;
 
 app.use(morgan('dev'));
-// app.use(helmet());
+// app.use(helmet()); //Brauchen wir nicht, da sonst die Mapbox nicht mehr geht
 app.use(cors());
 app.use(fileUpload());
 app.use(express.static(path.join(dirname, '/public')));
 app.use(express.json());
+
+//Immer auf HTTPS weiterleiten
+app.use((req, res, next) => {
+  if (req.headers.host === 'localhost:2410') return next();
+
+  return res.redirect('https://' + req.headers.host + req.url);
+});
 
 app.use('/', routes);
 

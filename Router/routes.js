@@ -36,11 +36,6 @@ router.patch('/changePassword/:id', asyncHandler(changePassword));
 router.get('/getMitarbeiter', asyncHandler(getMitarbeiter));
 router.patch('/changeRole/:id', asyncHandler(changeRole));
 
-//Render healthcheck
-router.get(
-  '/renderhealthcheck',
-  asyncHandler((req, res) => res.status(200).send('We are on!')),
-);
 
 router.get('/*', (req, res) => res.redirect('/'));
 
