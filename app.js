@@ -17,7 +17,8 @@ const app = express();
 
 const PORT = process.env.PORT || 2410;
 
-app.use(redirectSSL); //Redirect von http auf https
+//TODO DAS IMMER AUSKOMMENTIEREN WENN LOCALHOST
+// app.use(redirectSSL); //Redirect von http auf https
 app.use(morgan('dev'));
 // app.use(helmet()); //Brauchen wir nicht, da sonst die Mapbox nicht mehr geht
 app.use(cors());

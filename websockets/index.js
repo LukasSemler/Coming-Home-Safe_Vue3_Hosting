@@ -14,7 +14,7 @@ function wsServer(httpServer) {
     //Verbundenen User anpassen und in Array speichern
     let email = ws._protocol;
     email = email.replace('|', '@');
-    
+
     //Neuen User hinzufügen
     if (!connections.find(({ email: found }) => found == email)) connections.push({ ws, email });
     //Rausgefallenen Kunden einordnen
@@ -38,6 +38,7 @@ function wsServer(httpServer) {
               email: elem.email,
               userfarbe: '#' + Math.floor(Math.random() * 16777215).toString(16),
               nachrichten: [],
+              nachrichtUngelesenVonMitarbeiter: false,
               alarm: false,
               user: positionData,
               lat: null,
@@ -90,7 +91,11 @@ function wsServer(httpServer) {
         //NachrichtenArray im Connection-Array abspeichenr
         connections = connections.map((connEl) =>
           connEl.email == positionData.WSUser.email
-            ? { ...connEl, nachrichten: positionData.nachrichten }
+            ? {
+                ...connEl,
+                nachrichten: positionData.nachrichten, //Neu Nachrichten im Array setzen
+                nachrichtUngelesenVonMitarbeiter: true, //Mitarbeiter bekommt ungelesene/neue Nachricht; Ungelesen => true
+              }
             : connEl,
         );
 
@@ -100,7 +105,6 @@ function wsServer(httpServer) {
         );
       } else if (type == 'MessageChatFromMitarbeiter') {
         //NachrichtenArray im Connection-Array abspeichenr
-
         connections = connections.map((connEl) =>
           connEl.email == positionData.WSUser.email
             ? { ...connEl, nachrichten: positionData.nachrichten }
@@ -115,6 +119,16 @@ function wsServer(httpServer) {
               daten: positionData.WSUser,
             }),
           ),
+        );
+      } else if (type == 'MessageVonMitarbeiterGelesen') {
+        //Bei WebSocketUser, die Variable wieder auf 'false' stellen
+        connections = connections.map((connEl) =>
+          connEl.email == positionData
+            ? {
+                ...connEl,
+                nachrichtUngelesenVonMitarbeiter: false, // Mitarbeiter hat die Nachricht gelesen; Ungelesen => false
+              }
+            : connEl,
         );
       }
       // ------USERABMELDUNG------ --> Ab da verschwindet dieser dann von der map
@@ -135,17 +149,24 @@ function wsServer(httpServer) {
       // User aus dem Array löschen
       connections = connections.map((elem) => {
         if (elem.ws == ws) {
+          //! ALT
+          // return {
+          //   ws: null,
+          //   email: elem.email,
+          //   userfarbe: elem.userfarbe,
+          //   nachrichten: elem.nachrichten,
+          //   alarm: elem.alarm,
+          //   user: elem.user,
+          //   lat: elem.lat,
+          //   lng: elem.lng,
+          //   adresse: elem.adresse,
+          //   zuletztGesichtet: elem.zuletztGesichtet,
+          // };
+
+          //* NEUER CODE
           return {
+            ...elem,
             ws: null,
-            email: elem.email,
-            userfarbe: elem.userfarbe,
-            nachrichten: elem.nachrichten,
-            alarm: elem.alarm,
-            user: elem.user,
-            lat: elem.lat,
-            lng: elem.lng,
-            adresse: elem.adresse,
-            zuletztGesichtet: elem.zuletztGesichtet,
           };
         } else {
           return elem;
@@ -158,41 +179,58 @@ function wsServer(httpServer) {
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
 setInterval(() => {
   console.log('########');
-  connections.forEach((elem) => {
-    console.log(elem);
-    console.log('--------------------------------');
-  });
+  console.log(connections);
+  console.log('--------------------------------');
   console.log('########');
 }, 2000);
 
 //ConnectionsArray an alle Senden, für Gleichmäßigkeit
 setInterval(() => {
-  connections.forEach(({ ws }) =>
+  connections.forEach(
+    ({ ws }) =>
+      //! ALTER CODE
+      // ws?.send(
+      //   JSON.stringify({
+      //     type: 'connectionsVerteilung',
+      //     daten: connections.map(
+      //       ({
+      //         email,
+      //         nachrichten,
+      //         alarm,
+      //         user,
+      //         lat,
+      //         lng,
+      //         zuletztGesichtet,
+      //         userfarbe,
+      //         adresse,
+      //         nachrichtUngelesenVonMitarbeiter,
+      //       }) => ({
+      //         email,
+      //         nachrichten,
+      //         alarm,
+      //         userfarbe,
+      //         user,
+      //         lat,
+      //         lng,
+      //         zuletztGesichtet,
+      //         adresse,
+      //         nachrichtUngelesenVonMitarbeiter,
+      //       }),
+      //     ),
+      //   }),
+      // ),
+
+    //* NEUER CODE
     ws?.send(
       JSON.stringify({
         type: 'connectionsVerteilung',
-        daten: connections.map(
-          ({
-            email,
-            nachrichten,
-            alarm,
-            user,
-            lat,
-            lng,
-            zuletztGesichtet,
-            userfarbe,
-            adresse,
-          }) => ({
-            email,
-            nachrichten,
-            alarm,
-            userfarbe,
-            user,
-            lat,
-            lng,
-            zuletztGesichtet,
-            adresse,
-          }),
+        daten: JSON.parse(
+          JSON.stringify(
+            connections.map((connEl) => ({
+              ...connEl,
+              ws: null,
+            })),
+          ),
         ),
       }),
     ),
