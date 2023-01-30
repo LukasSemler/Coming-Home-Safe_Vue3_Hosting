@@ -186,54 +186,55 @@ setInterval(() => {
 
 //ConnectionsArray an alle Senden, für Gleichmäßigkeit
 setInterval(() => {
-  connections.forEach(
-    ({ ws }) =>
-      //! ALTER CODE
-      // ws?.send(
-      //   JSON.stringify({
-      //     type: 'connectionsVerteilung',
-      //     daten: connections.map(
-      //       ({
-      //         email,
-      //         nachrichten,
-      //         alarm,
-      //         user,
-      //         lat,
-      //         lng,
-      //         zuletztGesichtet,
-      //         userfarbe,
-      //         adresse,
-      //         nachrichtUngelesenVonMitarbeiter,
-      //       }) => ({
-      //         email,
-      //         nachrichten,
-      //         alarm,
-      //         userfarbe,
-      //         user,
-      //         lat,
-      //         lng,
-      //         zuletztGesichtet,
-      //         adresse,
-      //         nachrichtUngelesenVonMitarbeiter,
-      //       }),
-      //     ),
-      //   }),
-      // ),
-
-    //* NEUER CODE
+  connections.forEach(({ ws }) =>
+    //! ALTER CODE
     ws?.send(
       JSON.stringify({
         type: 'connectionsVerteilung',
-        daten: JSON.parse(
-          JSON.stringify(
-            connections.map((connEl) => ({
-              ...connEl,
-              ws: null,
-            })),
+          daten: connections.map(
+            ({
+              email,
+              nachrichten,
+              alarm,
+              user,
+              lat,
+              lng,
+              zuletztGesichtet,
+              userfarbe,
+              adresse,
+              nachrichtUngelesenVonMitarbeiter
+            }) => ({
+              email,
+              nachrichten,
+              alarm,
+              userfarbe,
+              user,
+              lat,
+              lng,
+              zuletztGesichtet,
+              adresse,
+              nachrichtUngelesenVonMitarbeiter
+            }),
           ),
-        ),
+
+        // daten: '',
       }),
     ),
+
+    //* NEUER CODE
+    // ws?.send(
+    //   JSON.stringify({
+    //     type: 'connectionsVerteilung',
+    //     daten: JSON.parse(
+    //       JSON.stringify(
+    //         connections.map((connEl) => ({
+    //           ...connEl,
+    //           ws: null,
+    //         })),
+    //       ),
+    //     ),
+    //   }),
+    // ),
   );
 }, 2000);
 
