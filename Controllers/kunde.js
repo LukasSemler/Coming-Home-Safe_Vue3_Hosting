@@ -156,7 +156,7 @@ const login = async (req, res) => {
 
       //Code an User schicken
       emailClient.sendEmailWithTemplate({
-        From: 'semler.l04@htlwienwest.at',
+        From: 'office@cominghomesafe.at',
         To: email,
         TemplateAlias: 'factorMit',
         TemplateModel: {
@@ -199,7 +199,7 @@ const sendNewPassword = async (req, res) => {
   if (result) {
     //Email an User senden + Serverfeedback zurückgeben
     emailClient.sendEmailWithTemplate({
-      From: 'semler.l04@htlwienwest.at',
+      From: 'office@cominghomesafe.at',
       To: email,
       TemplateAlias: 'newPW',
       TemplateModel: {
