@@ -94,18 +94,22 @@ const sendCodeUser = async (req, res) => {
   // Code generieren
   const code = makeAuthCode(6);
 
-  //Code an den User schicken
-  emailClient.sendEmailWithTemplate({
-    From: 'office@cominghomesafe.at',
-    To: email,
-    TemplateAlias: 'factor',
-    TemplateModel: {
-      name: vorname + ' ' + nachname,
-      code: code,
-      company_name: 'Coming Home Safe',
-      company_address: 'Thaliastraße 125',
-    },
-  });
+  try {
+    //Code an den User schicken
+    emailClient.sendEmailWithTemplate({
+      From: 'office@cominghomesafe.at',
+      To: email,
+      TemplateAlias: 'factor',
+      TemplateModel: {
+        name: vorname + ' ' + nachname,
+        code: code,
+        company_name: 'Coming Home Safe',
+        company_address: 'Thaliastraße 125',
+      },
+    });
+  } catch (error) {
+    console.log('Fehler beim Senden des Codes: ', error);
+  }
 
   res.status(200).send(code);
 };
