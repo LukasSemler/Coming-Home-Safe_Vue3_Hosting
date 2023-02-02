@@ -14,8 +14,8 @@ import postmark from 'postmark';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import bcrypt from 'bcrypt'
-const hashSalt = 5; 
+import bcrypt from 'bcrypt';
+const hashSalt = 5;
 dotenv.config();
 
 const dirname = path.resolve();
@@ -65,8 +65,6 @@ const validateUser = validator({
   },
 });
 
-
-
 //Generiert einen Code (Passwort vergessen + Auth-Code)
 let makeAuthCode = (length) => {
   let code = '';
@@ -97,19 +95,17 @@ const sendCodeUser = async (req, res) => {
   const code = makeAuthCode(6);
 
   //Code an den User schicken
-  // emailClient.sendEmailWithTemplate({
-  //   From: 'semler.l04@htlwienwest.at',
-  //   To: email,
-  //   TemplateAlias: 'faktor',
-  //   TemplateModel: {
-  //     vorname: vorname,
-  //     nachname: nachname,
-  //     product_name: 'Coming Home Safe',
-  //     code: code,
-  //     company_name: 'Coming Home Safe',
-  //     company_address: 'Thaliastraße 125',
-  //   },
-  // });
+  emailClient.sendEmailWithTemplate({
+    From: 'office@cominghomesafe.at',
+    To: email,
+    TemplateAlias: 'factor',
+    TemplateModel: {
+      name: vorname + ' ' + nachname,
+      code: code,
+      company_name: 'Coming Home Safe',
+      company_address: 'Thaliastraße 125',
+    },
+  });
 
   res.status(200).send(code);
 };
@@ -159,19 +155,17 @@ const login = async (req, res) => {
       const code = makeAuthCode(6);
 
       //Code an User schicken
-      // emailClient.sendEmailWithTemplate({
-      //   From: 'semler.l04@htlwienwest.at',
-      //   To: email,
-      //   TemplateAlias: 'faktor-mitarbeiter',
-      //   TemplateModel: {
-      //     vorname: result.vorname,
-      //     nachname: result.nachname,
-      //     product_name: 'Coming Home Safe',
-      //     code: code,
-      //     company_name: 'Coming Home Safe',
-      //     company_address: 'Thaliastraße 125',
-      //   },
-      // });
+      emailClient.sendEmailWithTemplate({
+        From: 'semler.l04@htlwienwest.at',
+        To: email,
+        TemplateAlias: 'factorMit',
+        TemplateModel: {
+          name: result.vorname + ' ' + result.nachname,
+          code: code,
+          company_name: 'Coming Home Safe',
+          company_address: 'Thaliastraße 125',
+        },
+      });
       return res.status(200).send(JSON.stringify({ foundUser: result, code: code }));
     } else if (!result.isAdmin)
       return res.status(200).send(JSON.stringify({ foundUser: result, code: 'kein Admin' }));
@@ -207,9 +201,8 @@ const sendNewPassword = async (req, res) => {
     emailClient.sendEmailWithTemplate({
       From: 'semler.l04@htlwienwest.at',
       To: email,
-      TemplateAlias: 'passwort-reset',
+      TemplateAlias: 'newPW',
       TemplateModel: {
-        product_name: 'Coming-Home-Safe',
         company_name: 'Coming-Home-Safe',
         company_address: 'Thaliastraße 125',
         password: newPw,
