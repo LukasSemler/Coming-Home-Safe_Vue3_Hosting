@@ -22,48 +22,48 @@ const dirname = path.resolve();
 
 const emailClient = new postmark.ServerClient(process.env.postmarkToken);
 
-// const validateUser = validator({
-//   required: true,
-//   type: 'object',
-//   properties: {
-//     vorname: {
-//       required: true,
-//       type: 'string',
-//     },
-//     nachname: {
-//       required: true,
-//       type: 'string',
-//     },
-//     email: {
-//       required: true,
-//       type: 'string',
-//     },
-//     passwort: {
-//       required: true,
-//       type: 'string',
-//     },
-//     strasse: {
-//       required: true,
-//       type: 'string',
-//     },
-//     plz: {
-//       required: true,
-//       type: 'string',
-//     },
-//     ort: {
-//       required: true,
-//       type: 'string',
-//     },
-//     hobbysinteressen: {
-//       require: true,
-//       type: 'string',
-//     },
-//     geburtsdatum: {
-//       require: true,
-//       type: 'string',
-//     },
-//   },
-// });
+const validateUser = validator({
+  required: true,
+  type: 'object',
+  properties: {
+    vorname: {
+      required: true,
+      type: 'string',
+    },
+    nachname: {
+      required: true,
+      type: 'string',
+    },
+    email: {
+      required: true,
+      type: 'string',
+    },
+    passwort: {
+      required: true,
+      type: 'string',
+    },
+    strasse: {
+      required: true,
+      type: 'string',
+    },
+    plz: {
+      required: true,
+      type: 'string',
+    },
+    ort: {
+      required: true,
+      type: 'string',
+    },
+    hobbysinteressen: {
+      require: true,
+      type: 'string',
+    },
+    geburtsdatum: {
+      require: true,
+      type: 'string',
+    },
+  },
+});
 
 //Generiert einen Code (Passwort vergessen + Auth-Code)
 let makeAuthCode = (length) => {
@@ -156,7 +156,7 @@ const login = async (req, res) => {
 
       //Code an User schicken
       emailClient.sendEmailWithTemplate({
-        From: 'office@cominghomesafe.at',
+        From: 'semler.l04@htlwienwest.at',
         To: email,
         TemplateAlias: 'factorMit',
         TemplateModel: {
@@ -199,7 +199,7 @@ const sendNewPassword = async (req, res) => {
   if (result) {
     //Email an User senden + Serverfeedback zurückgeben
     emailClient.sendEmailWithTemplate({
-      From: 'office@cominghomesafe.at',
+      From: 'semler.l04@htlwienwest.at',
       To: email,
       TemplateAlias: 'newPW',
       TemplateModel: {
