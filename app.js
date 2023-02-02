@@ -28,8 +28,8 @@ app.use(express.json());
 
 app.use('/', routes);
 
-app.use(ErrorHandler);
 app.use(NotFoundHandler);
+app.use(ErrorHandler);
 
 const http = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
