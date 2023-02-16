@@ -72,7 +72,7 @@ let makeAuthCode = (length) => {
 
   //Auth-Code generieren wenn Kunde noch nicht vorhanden
   for (let index = 0; index < length; index++) {
-    let rand = Math.round(Math.random() * (auswahl.length - 0));
+    let rand = Math.round(Math.random() * (auswahl.length - 1));
     code += auswahl[rand];
   }
   return code;
