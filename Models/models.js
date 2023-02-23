@@ -1,8 +1,6 @@
 import { query, pool } from '../DB/index.js';
 import bcrypt from 'bcrypt';
 
-
-
 const checkIfUserExists = async (id) => {
   const { rows } = await query('SELECT * FROM kunde WHERE email = $1', [id]);
 
@@ -12,6 +10,9 @@ const checkIfUserExists = async (id) => {
 
 const registerUserDB = async (user, encrptedPW) => {
   const client = await pool.connect();
+
+  console.log(user);
+  console.log(encrptedPW);
 
   try {
     await client.query('BEGIN');
@@ -93,23 +94,26 @@ const changePasswordDB = async (id, password) => {
 async function sendPositionDB(positionDatenpaket) {
   const client = await pool.connect();
 
-  try{
+  try {
     const { rows } = await query(
       'UPDATE coordinates SET lat = $1, lng = $2, uhrzeit = $3, fk_kunde = $4 returning *;',
-      [positionDatenpaket.lat, positionDatenpaket.lng, positionDatenpaket.dateTime, positionDatenpaket.user.k_id],
+      [
+        positionDatenpaket.lat,
+        positionDatenpaket.lng,
+        positionDatenpaket.dateTime,
+        positionDatenpaket.user.k_id,
+      ],
     );
 
-    await client.query("COMMIT");
+    await client.query('COMMIT');
 
-    if(!rows[0]) return null
+    if (!rows[0]) return null;
     return rows;
-  }
-  catch(error){
+  } catch (error) {
     await client.query('ROLLBACK');
-    
-    console.log("Error: "+error)
-  }
-  finally{
+
+    console.log('Error: ' + error);
+  } finally {
     client.release();
   }
 }
