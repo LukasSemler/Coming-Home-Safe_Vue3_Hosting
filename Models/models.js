@@ -18,7 +18,7 @@ const registerUserDB = async (user, encrptedPW) => {
 
     const { rows } = await client.query(
       `insert into kunde (vorname, nachname, email, passwort, strasse, ort, plz, hobbysinteressen, geburtsdatum, isadmin,
-                   suser, link_thumbnail)
+                   suser, usericon)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *;`,
       [
         user.vorname,
@@ -32,7 +32,7 @@ values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *;`,
         '2004-12-01',
         false,
         false,
-        user.link_thumbnail,
+        user.usericon,
       ],
     );
 
@@ -127,7 +127,7 @@ async function patchUserDB(id, user) {
     if (!rows[0]) return false;
 
     const { rows: changeData } = await client.query(
-      'UPDATE kunde SET vorname = $1, nachname = $2, email = $3, strasse = $4, ort = $5, plz = $6, link_thumbnail = $7 where k_id = $8 returning *; ',
+      'UPDATE kunde SET vorname = $1, nachname = $2, email = $3, strasse = $4, ort = $5, plz = $6, usericon = $7 where k_id = $8 returning *; ',
       [
         user.vorname,
         user.nachname,
@@ -135,7 +135,7 @@ async function patchUserDB(id, user) {
         user.strasse_hnr,
         user.stadt,
         user.plz,
-        user.link_thumbnail,
+        user.usericon,
         id,
       ],
     );

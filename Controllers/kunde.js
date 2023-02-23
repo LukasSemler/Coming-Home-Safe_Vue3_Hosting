@@ -110,27 +110,7 @@ const sendCodeUser = async (req, res) => {
   res.status(200).send(code);
 };
 
-//Thumbnail setzen und speichern
-const sendThumbnail = async (req, res) => {
-  try {
-    const { titel, datentyp } = req.body;
-    console.log(titel, datentyp);
-    const uniqueImageName = path.join(dirname, `public/images/${titel}.${datentyp}`);
-    //schauen ob das Bild schon existiert, wenn ja löschen und neu erstellen
-    if (fs.existsSync(`${dirname}/public/images/${titel}.${datentyp}`)) {
-      fs.unlinkSync(`${dirname}/public/images/${titel}.${datentyp}`);
-    }
-
-    fs.writeFileSync(`${uniqueImageName}`, req.files.image.data);
-
-    res.status(200).send('Success');
-  } catch (error) {
-    console.log(error);
-    res.status(404).send('Something went wrong');
-  }
-};
-
-const sendDataRegister = async (req, res) => {
+const register = async (req, res) => {
   console.log(req.body);
   const encrptedPW = bcrypt.hashSync(req.body.password, hashSalt);
   const result = await registerUserDB(req.body, encrptedPW);
@@ -268,8 +248,7 @@ const changeRole = async (req, res) => {
 
 export {
   sendCodeUser,
-  sendThumbnail,
-  sendDataRegister,
+  register,
   login,
   sendPosition,
   sendNewPassword,

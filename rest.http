@@ -82,7 +82,7 @@ Content-Type: application/json
       "titel": "iPhone 13 Pro Max",
       "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
       "preis": "1200.99",
-      "link_thumbnail": "/images/iphone13promax.png",
+      "usericon": "/images/iphone13promax.png",
       "link_photo": "http://localhost:2410/images/image2.jpg"
     },
     {
@@ -90,7 +90,7 @@ Content-Type: application/json
       "titel": "MacPro",
       "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
       "preis": "59828.00",
-      "link_thumbnail": "/images/MacPro.jpg",
+      "usericon": "/images/MacPro.jpg",
       "link_photo": "http://localhost:2410/images/image18.jpg"
     }
   ]
@@ -107,7 +107,7 @@ Content-Type: application/json
   "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
   "preis": 1200.99,
   "kategorie": { "k_id": 3, "titel": "Samsung" },
-  "link_thumbnail": "/images/iphone13promax.png"
+  "usericon": "/images/iphone13promax.png"
 }
 
 ############
