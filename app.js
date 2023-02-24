@@ -9,6 +9,7 @@ import wsServer from './websockets/index.js';
 
 import routes from './Router/routes.js';
 import redirectSSL from 'redirect-ssl';
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(cors());
 app.use(fileUpload());
 app.use(express.static(path.join(dirname, '/public')));
 app.use(express.json());
+app.use(bodyParser({ limit: '50mb' }));
 
 app.use('/', routes);
 
