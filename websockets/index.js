@@ -177,12 +177,12 @@ function wsServer(httpServer) {
 }
 
 //Testausgabe, damit man immer die Anzahl der aktiven User bekommt
-setInterval(() => {
-  console.log('########');
-  console.log(connections);
-  console.log('--------------------------------');
-  console.log('########');
-}, 2000);
+// setInterval(() => {
+//   console.log('########');
+//   console.log(connections);
+//   console.log('--------------------------------');
+//   console.log('########');
+// }, 2000);
 
 //ConnectionsArray an alle Senden, für Gleichmäßigkeit
 setInterval(() => {

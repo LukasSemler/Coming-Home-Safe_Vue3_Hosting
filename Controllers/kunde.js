@@ -157,9 +157,10 @@ const login = async (req, res) => {
 //Position in DB speichern
 const sendPosition = async (req, res) => {
   //Standortdaten
-  const positionData = req.body;
+  const { pos } = req.body;
+  console.log(pos);
 
-  const result = await sendPositionDB(positionData);
+  const result = await sendPositionDB(pos);
 
   if (result) return res.status(200).send('Position successfully sent');
 

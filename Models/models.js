@@ -118,29 +118,21 @@ const changePasswordDB = async (id, password) => {
 };
 
 async function sendPositionDB(positionDatenpaket) {
-  const client = await pool.connect();
-
   try {
     const { rows } = await query(
-      'UPDATE coordinates SET lat = $1, lng = $2, uhrzeit = $3, fk_kunde = $4 returning *;',
+      'UPDATE coordinates SET lat = $1, lng = $2, uhrzeit = $3 WHERE fk_kunde = $4 returning *;',
       [
         positionDatenpaket.lat,
         positionDatenpaket.lng,
-        positionDatenpaket.dateTime,
-        positionDatenpaket.user.k_id,
+        positionDatenpaket.zuletztGesichtet,
+        positionDatenpaket.userID,
       ],
     );
-
-    await client.query('COMMIT');
 
     if (!rows[0]) return null;
     return rows;
   } catch (error) {
-    await client.query('ROLLBACK');
-
-    console.log('Error: ' + error);
-  } finally {
-    client.release();
+    console.log(error);
   }
 }
 
