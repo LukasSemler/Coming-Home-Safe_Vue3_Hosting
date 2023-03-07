@@ -16,35 +16,61 @@ const registerUserDB = async (user, encrptedPW) => {
 
   try {
     await client.query('BEGIN');
+    let rowsFull;
 
-    const { rows } = await client.query(
-      `insert into kunde (vorname, nachname, email, passwort, strasse, ort, plz, hobbysinteressen, geburtsdatum, isadmin,
+    if (user.usericon) {
+      const { rows } = await client.query(
+        `insert into kunde (vorname, nachname, email, passwort, strasse, ort, plz, hobbysinteressen, geburtsdatum, isadmin,
                    suser, usericon)
 values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *;`,
-      [
-        user.vorname,
-        user.nachname,
-        user.email,
-        encrptedPW,
-        user.strasse_hnr,
-        user.stadt,
-        user.plz,
-        'Noch einbauen',
-        '2004-12-01',
-        false,
-        false,
-        user.usericon,
-      ],
-    );
+        [
+          user.vorname,
+          user.nachname,
+          user.email,
+          encrptedPW,
+          user.strasse_hnr,
+          user.stadt,
+          user.plz,
+          'Noch einbauen',
+          '2004-12-01',
+          false,
+          false,
+          user.usericon,
+        ],
+      );
+
+      rowsFull = rows;
+    } else {
+      const { rows } = await client.query(
+        `insert into kunde (vorname, nachname, email, passwort, strasse, ort, plz, hobbysinteressen, geburtsdatum, isadmin,
+                   suser)
+values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *;`,
+        [
+          user.vorname,
+          user.nachname,
+          user.email,
+          encrptedPW,
+          user.strasse_hnr,
+          user.stadt,
+          user.plz,
+          'Noch einbauen',
+          '2004-12-01',
+          false,
+          false,
+        ],
+      );
+
+      rowsFull = rows;
+    }
 
     await client.query(
       'INSERT INTO coordinates (lat, lng, uhrzeit, fk_kunde) values ($1, $2, $3, $4)',
-      [null, null, null, rows[0].k_id],
+      [null, null, null, rowsFull[0].k_id],
     );
 
     await client.query('COMMIT');
 
-    return rows;
+    return rowsFull;
   } catch (error) {
     await client.query('ROLLBACK');
     console.log('Fehler beim Registrieren');
