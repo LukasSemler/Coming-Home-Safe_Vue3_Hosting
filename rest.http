@@ -26,8 +26,8 @@ POST http://localhost:2410/login
 Content-Type: application/json
 
 {
-  "email": "benjamin@stauf.at",
-  "password": "BenniPW"
+  "email": "jane@doe.at",
+  "password": "KundePW"
 }
 
 
