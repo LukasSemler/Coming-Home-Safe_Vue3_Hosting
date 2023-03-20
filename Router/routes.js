@@ -21,8 +21,8 @@ const router = express.Router();
 router.get('/', (req, res) => res.status(200).send('Test'));
 
 //KundenRouten
-router.post('/sendNewPassword', asyncHandler(sendNewPassword));
-router.post('/sendCodeRegister', asyncHandler(sendCodeUser));
+router.post('/sendNewPassword', rateLimiter, asyncHandler(sendNewPassword));
+router.post('/sendCodeRegister', rateLimiter, asyncHandler(sendCodeUser));
 router.post('/register', rateLimiter, asyncHandler(register));
 router.post('/login', rateLimiter, asyncHandler(login));
 router.patch('/patchUser/:id', asyncHandler(patchUser));
@@ -34,7 +34,7 @@ router.delete('/deleteAccount/:id', rateLimiter, asyncHandler(deleteAccount));
 router.patch('/changePassword/:id', rateLimiter, asyncHandler(changePassword));
 
 router.get('/getMitarbeiter', rateLimiter, asyncHandler(getMitarbeiter));
-router.patch('/changeRole/:id', asyncHandler(changeRole));
+router.patch('/changeRole/:id', rateLimiter, asyncHandler(changeRole));
 
 router.get('/*', (req, res) => res.redirect('/'));
 
