@@ -34,6 +34,7 @@
     "pg": "^8.7.3",
     "postmark": "^3.0.12",
     "redirect-ssl": "^3.0.0",
+    "route-cache": "^0.5.0",
     "websocket": "^1.0.34",
     "ws": "^8.7.0"
   },
